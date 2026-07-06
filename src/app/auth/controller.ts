@@ -4,6 +4,8 @@ import { db } from '../../db/index.js';
 import { eq } from 'drizzle-orm';
 import { userTable } from '../../db/schema.js';
 import { createHmac, randomBytes } from 'node:crypto';
+import { createUserToken } from './utils/token.js';
+
 
 
 const hashPassword = (password: string, salt: string) => {
@@ -45,8 +47,9 @@ class AuthenticationController {
         if (userFromDb.password !== hash) return res.status(401).json({ message: 'invalid credentials' })
 
         //TODO : create tocken
+        const token = createUserToken({ id: userFromDb.id })
 
-        return res.status(200).json({ message: 'user signed in successfully', data: { token: 1 } });
+        return res.status(200).json({ message: 'user signed in successfully', data: { token } });
 
     }
 }
